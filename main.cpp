@@ -26,11 +26,13 @@ using namespace std;
 
 int main(void) {
 	
-#if defined(SPARSE_DATASET)
-	benchmark_sparse();
-#elif defined(DENSE_DATASET)
-	benchmark_dense();
-#endif
+// #if defined(SPARSE_DATASET)
+// 	benchmark_sparse();
+// #elif defined(DENSE_DATASET)
+// 	benchmark_dense();
+// #endif
+
+	benchmark_ava();
 	return 0;
 }
 

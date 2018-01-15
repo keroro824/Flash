@@ -30,9 +30,9 @@ void LSHReservoirSampler::add(int numInputEntries, int* dataIdx, float* dataVal,
 	unsigned int* allprobsIdx = new unsigned int[_numTables * numInputEntries * _hashingProbes];
 #endif
 
-#if defined DEBUG
+// #if defined DEBUG
 	std::cout << "[LSHReservoirSampler::add] Started hashing. " << std::endl;
-#endif
+// #endif
 #if defined OPENCL_HASHING
 #ifdef PROFILE_READ
 	auto transfer_begin = Clock::now();
@@ -55,20 +55,22 @@ void LSHReservoirSampler::add(int numInputEntries, int* dataIdx, float* dataVal,
 	auto transfer_end = Clock::now();
 	transfer_time += GETTIME_MS(transfer_begin, transfer_end);
 #endif
-
+std::cout << "[LSHReservoirSampler::add] Started hashing. " << std::endl;
 	_hashFamily->getHash(&allprobsHash_gpuobj, &allprobsIdx_gpuobj, 
 		&dataIdx_obj, &dataVal_obj, &dataMarker_obj, numInputEntries, _hashingProbes);
-
+std::cout << "[LSHReservoirSampler::add] Started hashing. " << std::endl;
 	clReleaseMemObject(dataIdx_obj);
 	clReleaseMemObject(dataVal_obj);
 	clReleaseMemObject(dataMarker_obj);
+
+	std::cout << "[LSHReservoirSampler::add] Started hashing. " << std::endl;
 #elif defined CPU_HASHING
 	_hashFamily->getHash(allprobsHash, allprobsIdx, 
 		dataIdx, dataVal, dataMarker, numInputEntries, _hashingProbes);
 #endif
-#if defined DEBUG
+// #if defined DEBUG
 	std::cout << "[LSHReservoirSampler::add] Completed hashing. " << std::endl;
-#endif
+// #endif
 
 	/* Extra memory transfer for cross device processing. */
 #ifdef PROFILE_READ

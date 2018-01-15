@@ -19,22 +19,34 @@ void anshuReadSparse(string fileName, int *indices, int *markers, unsigned int n
 	{
 		char *mystring = &str[0];
 		char * pch;
-		pch = strtok(mystring, " ");
-		int track = 0;
-		list.clear();
-		while (pch != NULL)
-		{
-			if (track % 2 == 1)
-				list.push_back(pch);
-			track++;
-			pch = strtok(NULL, " :");
-		}
-
+		// pch = strtok(mystring, " ");
+		// int track = 0;
+		// list.clear();
+		// while (pch != NULL)
+		// {
+		// 	if (track % 2 == 1)
+		// 		list.push_back(pch);
+		// 	track++;
+		// 	pch = strtok(NULL, " :");
+		// }
 		markers[linenum] = totalLen;
-		for (auto const& var : list) {
-			indices[totalLen] = stoi(var);
+		std::hash<string> stringHasher;
+		int length = str.length();
+		int ngrams = 3;
+		unsigned int *nonzeros = new unsigned int[length - ngrams + 1];
+		for (size_t i = 0; i < length - ngrams + 1; i++)
+		{
+			string stri = str.substr(i, ngrams);
+			unsigned int strhash = (stringHasher(stri));
+			nonzeros[i] = strhash;
 			totalLen++;
 		}
+
+		// markers[linenum] = totalLen;
+		// for (auto const& var : list) {
+		// 	indices[totalLen] = stoi(var);
+		// 	totalLen++;
+		// }
 		linenum++;
 		if (linenum == n) {
 			break;

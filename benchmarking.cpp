@@ -474,14 +474,15 @@ void benchmark_ava() {
 	std::cout << "Init ... " << std::endl;
 	begin = Clock::now();
 	LSH *hashFamily = new LSH(2, K, NUMTABLES, RANGE_POW);
+
 	LSHReservoirSampler *myReservoir = new LSHReservoirSampler(hashFamily, RANGE_POW, NUMTABLES, RESERVOIR_SIZE,
 		DIMENSION, RANGE_ROW_U, num_vectors, QUERYPROBES, HASHINGPROBES, OCCUPANCY);
 	end = Clock::now();
 	etime_0 = (end - begin).count() / 1000000;
 	std::cout << "Init Hash and Reservoir Used " << etime_0 << "ms. \n";
 
-	myReservoir->showParams();
-
+	myReservoir->showParams(); 
+ 
 	int* data_indice = new int[(unsigned)(num_vectors * DIMENSION)];
 	float* data_val = new float[(unsigned)(num_vectors * DIMENSION)];
 	int* data_marker = new int[num_vectors + 1];
@@ -489,7 +490,8 @@ void benchmark_ava() {
 	std::cout << "Reading data ... " << std::endl;
 	etime_0 = 0;
 	begin = Clock::now();
-	readSparse(BASEFILE, 0, (unsigned)(num_vectors), data_indice, data_val, data_marker, (unsigned)(num_vectors * DIMENSION));
+	// readSparse(BASEFILE, 0, (unsigned)(num_vectors), data_indice, data_val, data_marker, (unsigned)(num_vectors * DIMENSION));
+	anshuReadSparse("example.csv", data_indice, data_marker, (unsigned)(num_vectors), (unsigned)(num_vectors * DIMENSION));
 
 	end = Clock::now();
 	etime_0 += (end - begin).count() / 1000000;
@@ -535,88 +537,6 @@ void benchmark_ava() {
 	end = Clock::now();
 	etime_0 = (end - begin).count() / 1000000;
 	std::cout << "ANN Used " << etime_0 << "ms. \n";
-
-#if defined MATMUL
-
-	std::cout << "Reading groundtruth ..." << std::endl;
-	unsigned int* gtruth_indice = new unsigned int[NUMQUERY * AVAILABLE_TOPK];
-	readGroundTruthInt(GTRUTHINDICE, NUMQUERY, AVAILABLE_TOPK, gtruth_indice);
-	std::cout << "Done. \n";
-
-	std::cout << "Approx AtA ... " << std::endl;
-	begin = Clock::now();
-	float *approxAtA = new float[(unsigned int)(NUMQUERY * num_vectors)]();
-#pragma omp parallel private(startA, endA, startB, endB)
-#pragma omp parallel for
-	for (int i = 0; i < NUMQUERY; i++) { // Only multiply and evaluate queries. 
-		startA = data_marker[i];
-		endA = data_marker[i + 1];
-		for (int j = 0; j < TOPK; j++) {
-			unsigned int output_idx = min(num_vectors - 1, ann_out[i * TOPK + j]);
-			startB = data_marker[output_idx];
-			endB = data_marker[output_idx + 1];
-			approxAtA[(unsigned)(i * num_vectors + output_idx)] =
-				SparseVecMul(data_indice + startA,
-					data_val + startA,
-					endA - startA,
-					data_indice + startB,
-					data_val + startB,
-					endB - startB);
-		}
-	}
-	end = Clock::now();
-	etime_0 = (end - begin).count() / 1000000;
-	std::cout << "Approx AtA Used " << etime_0 << "ms. Computed " << NUMQUERY << " rows. \n";
-
-	std::cout << "Evaluate Approx. AtA ... " << std::endl;
-	float *AtA = new float[(unsigned int)(NUMQUERY * num_vectors)]();
-#pragma omp parallel private(startA, endA, startB, endB)
-#pragma omp parallel for
-	for (int i = 0; i < NUMQUERY; i++) {
-		startA = data_marker[i];
-		endA = data_marker[i + 1];
-
-		/* Self. */
-		AtA[(unsigned)(i * num_vectors + i)] =
-			SparseVecMul(data_indice + startA,
-				data_val + startA,
-				endA - startA,
-				data_indice + startA,
-				data_val + startA,
-				endA - startA);
-
-		for (int j = 0; j < (TOPK - 1); j++) {
-			startB = data_marker[gtruth_indice[i * AVAILABLE_TOPK + j]];
-			endB = data_marker[gtruth_indice[i * AVAILABLE_TOPK + j] + 1];
-			AtA[(unsigned)(i * num_vectors + gtruth_indice[i * AVAILABLE_TOPK + j])] =
-				SparseVecMul(data_indice + startA,
-					data_val + startA,
-					endA - startA,
-					data_indice + startB,
-					data_val + startB,
-					endB - startB);
-		}
-	}
-
-	float total_l1 = 0;
-	float total_l2 = 0;
-
-	for (int i = 0; i < (NUMQUERY * num_vectors); i++) {
-		//if (AtA[i] - approxAtA[i] > 0) std::cout << (AtA[i] - approxAtA[i]) << ' ';
-		total_l1 += abs(AtA[i] - approxAtA[i]);
-		total_l2 += pow(AtA[i] - approxAtA[i], 2);
-	}
-
-	end = Clock::now();
-	etime_0 = (end - begin).count() / 1000000;
-	std::cout << "Eval Approx AtA Used " << etime_0 << "ms. \n";
-	std::cout << "L1 distance " << total_l1 << " for " << NUMQUERY << " rows\n";
-	std::cout << "Squared L2 distance " << total_l2 << " for " << NUMQUERY << " rows\n";
-	delete[] gtruth_indice;
-	delete[] approxAtA;
-	delete[] AtA;
-
-#endif // MATMUL. 
 
 	delete[] data_indice;
 	delete[] data_marker;
