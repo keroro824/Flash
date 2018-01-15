@@ -5,8 +5,9 @@ Then modify the file location and parameters below in the Parameters section. */
 
 //#define SIFT1M
 //#define URL
-#define WEBSPAM_TRI
+// #define WEBSPAM_TRI
 //#define KDD12
+#define RL
 
 /* Parameters. */
 
@@ -294,6 +295,39 @@ Then modify the file location and parameters below in the Parameters section. */
 #define QUERYFILE		"siftsmall_query.fvecs"
 #define GTRUTHINDICE	"siftsmall_gtruth_indices.txt"
 #define GTRUTHDIST		"siftsmall_gtruth_distances.txt"
+// #endif
+
+
+#elif defined RL
+
+#define SPARSE_DATASET
+
+#define NUMHASHBATCH				10
+#define BATCHPRINT					2
+
+#define K							4
+#define RANGE_POW					12
+#define RANGE_ROW_U					12
+
+#define NUMTABLES					32
+#define RESERVOIR_SIZE				64
+#define OCCUPANCY					1
+
+#define QUERYPROBES					1
+#define HASHINGPROBES				1
+
+#define DIMENSION					250
+#define FULL_DIMENSION				250
+#define NUMBASE						36
+#define MAX_RESERVOIR_RAND			36
+#define NUMQUERY					100
+#define TOPK						128
+#define AVAILABLE_TOPK				128
+
+#define BASEFILE		"example.csv"
+#define QUERYFILE		"example.csv"
+#define GTRUTHINDICE	"example.csv"
+#define GTRUTHDIST		"example.csv"
 #endif
 
 void benchmark_kselect();

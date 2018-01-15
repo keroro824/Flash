@@ -10,7 +10,7 @@
 #include <algorithm>
 #include "omp.h"
 
-//#define DEBUG
+#define DEBUG
 #define MAGIC_NUMBER 100 // For debugging purpose, ignore. 
 
 #define UNIVERSAL_HASH(x,M,a,b) ((unsigned) (a * x + b) >> (32 - M))
