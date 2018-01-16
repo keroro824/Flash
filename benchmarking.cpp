@@ -537,6 +537,16 @@ void benchmark_ava() {
 	end = Clock::now();
 	etime_0 = (end - begin).count() / 1000000;
 	std::cout << "ANN Used " << etime_0 << "ms. \n";
+	
+	ofstream program3data;
+	program3data.open("outputpair.csv");
+
+	for (int i=0; i<num_vectors ; i++){
+		for (int j=0; j<TOPK ;j++){
+			cout<< i+1 <<" "<< ann_out[i*TOPK+j]+1 <<endl;
+		}
+	}
+	
 
 	delete[] data_indice;
 	delete[] data_marker;

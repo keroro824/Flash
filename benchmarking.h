@@ -320,7 +320,7 @@ Then modify the file location and parameters below in the Parameters section. */
 #define FULL_DIMENSION				250
 #define NUMBASE						36
 #define MAX_RESERVOIR_RAND			36
-#define NUMQUERY					100
+#define NUMQUERY					0
 #define TOPK						128
 #define AVAILABLE_TOPK				128
 
