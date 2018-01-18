@@ -7,8 +7,8 @@ Then modify the file location and parameters below in the Parameters section. */
 //#define URL
 // #define WEBSPAM_TRI
 //#define KDD12
-#define RL
-
+//#define RL
+#define Synthetic
 /* Parameters. */
 
 #if defined SIFT1M
@@ -328,6 +328,39 @@ Then modify the file location and parameters below in the Parameters section. */
 #define QUERYFILE		"example.csv"
 #define GTRUTHINDICE	"example.csv"
 #define GTRUTHDIST		"example.csv"
+
+
+
+#elif defined Synthetic
+
+#define SPARSE_DATASET
+
+#define NUMHASHBATCH				10000
+#define BATCHPRINT					2
+
+#define K							4
+#define RANGE_POW					23
+#define RANGE_ROW_U					23
+
+#define NUMTABLES					32
+#define RESERVOIR_SIZE				64
+#define OCCUPANCY					1
+
+#define QUERYPROBES					1
+#define HASHINGPROBES				1
+
+#define DIMENSION					250
+#define FULL_DIMENSION				250
+#define NUMBASE						30000001
+#define MAX_RESERVOIR_RAND			30000000
+#define NUMQUERY					0
+#define TOPK						2
+#define AVAILABLE_TOPK				2
+
+#define BASEFILE		"data_pure.csv"
+#define QUERYFILE		"data_pure.csv"
+#define GTRUTHINDICE	"data_pure.csv"
+#define GTRUTHDIST		"data_pure.csv"
 #endif
 
 void benchmark_kselect();

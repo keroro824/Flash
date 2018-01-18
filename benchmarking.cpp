@@ -491,7 +491,7 @@ void benchmark_ava() {
 	etime_0 = 0;
 	begin = Clock::now();
 	// readSparse(BASEFILE, 0, (unsigned)(num_vectors), data_indice, data_val, data_marker, (unsigned)(num_vectors * DIMENSION));
-	anshuReadSparse("example.csv", data_indice, data_marker, (unsigned)(num_vectors), (unsigned)(num_vectors * DIMENSION));
+	anshuReadSparse(BASEFILE, data_indice, data_marker, (unsigned)(num_vectors), (unsigned)(num_vectors * DIMENSION));
 
 	end = Clock::now();
 	etime_0 += (end - begin).count() / 1000000;
